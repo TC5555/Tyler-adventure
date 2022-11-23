@@ -16,7 +16,7 @@ public class EnemyScript : MonoBehaviour
     public int health { get { return currentHealth; } }
     int currentHealth;
 
-    Color32 colorVal = new Color32(255,253,253,255);
+    Color32 colorVal = new Color32(255,255,255,255);
     
     Rigidbody2D rigidbody2D;
     float timer;
@@ -67,8 +67,14 @@ public class EnemyScript : MonoBehaviour
 
             gameObject.GetComponent<Renderer>().material.color = colorVal;
         }
-        timer -= Time.deltaTime;
 
+            
+        Physics.Raycast(transform.position, );
+
+
+
+        timer -= Time.deltaTime;
+        
         if (timer < 0)
         {
             direction = -direction;
