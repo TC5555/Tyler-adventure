@@ -51,13 +51,21 @@ public class EnemyScript : MonoBehaviour
         }
 
        
-        if (colorVal.b < 253)
+        if (colorVal.b < 255)
         {
+
+            if (colorVal.b + (byte)(750 * Time.deltaTime) > 255)
+            {
+                colorVal.b = 255;
+                colorVal.g = 255;
+            }
+            else
+            {
+                colorVal.b += (byte)(750 * Time.deltaTime);
+                colorVal.g += (byte)(750 * Time.deltaTime);
+            }
+
             gameObject.GetComponent<Renderer>().material.color = colorVal;
-            colorVal.b += (byte)(750 * Time.deltaTime);
-            colorVal.g += (byte)(750 * Time.deltaTime);
-            
-     
         }
         timer -= Time.deltaTime;
 
@@ -108,15 +116,18 @@ public class EnemyScript : MonoBehaviour
 
             gameObject.GetComponent<Renderer>().material.color = colorVal;
             DeathParticles.Play();
-            
+
 
             alive = false;
             rigidbody2D.simulated = false;
 
         }
+        else
+        {
 
-        colorVal = new Color32(255, 0, 0, 255);
 
+            colorVal = new Color32(255, 0, 0, 255);
+        }
       
     }
 }
