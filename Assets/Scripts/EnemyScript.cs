@@ -16,6 +16,8 @@ public class EnemyScript : MonoBehaviour
     public int health { get { return currentHealth; } }
     int currentHealth;
 
+    Color32 colorVal = new Color32(255,253,253,255);
+    
     Rigidbody2D rigidbody2D;
     float timer;
     int direction = 1;
@@ -23,23 +25,40 @@ public class EnemyScript : MonoBehaviour
 
     Animator animator;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         timer = changeTime;
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
+
     }
 
     void Update()
     {
-        //remember ! inverse the test, so if broken is true !broken will be false and return won’t be executed.
+  
+
         if (!alive)
         {
+            colorVal.a -= (byte)(750 * Time.deltaTime);
+            gameObject.GetComponent<Renderer>().material.color = colorVal;
+            if(colorVal.a < 3)
+            {
+                Destroy(gameObject);
+            }
             return;
         }
 
+       
+        if (colorVal.b < 253)
+        {
+            gameObject.GetComponent<Renderer>().material.color = colorVal;
+            colorVal.b += (byte)(750 * Time.deltaTime);
+            colorVal.g += (byte)(750 * Time.deltaTime);
+            
+     
+        }
         timer -= Time.deltaTime;
 
         if (timer < 0)
@@ -86,12 +105,18 @@ public class EnemyScript : MonoBehaviour
         currentHealth -= amount;
         if (currentHealth == 0)
         {
+
+            gameObject.GetComponent<Renderer>().material.color = colorVal;
             DeathParticles.Play();
-       
+            
+
             alive = false;
             rigidbody2D.simulated = false;
+
         }
-        //optional if you added the fixed animation
-       // animator.SetTrigger("Fixed");
+
+        colorVal = new Color32(255, 0, 0, 255);
+
+      
     }
 }

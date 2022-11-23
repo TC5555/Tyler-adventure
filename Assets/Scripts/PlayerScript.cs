@@ -167,7 +167,7 @@ GameObject ProjectilePrefab;
         
             projectile.Launch(lookDirection, transform.position);
         }
-        Debug.Log(lookDirection);
+
         //animator.SetTrigger("Launch");
     }
 

@@ -28,9 +28,15 @@ public class ProjectileScript : MonoBehaviour
         {
             
             float spreadRand = Random.Range(-spreadRange, spreadRange);
-            
-            direction.x += spreadRand;
-            direction.y -= spreadRand;
+            if (direction.x < 0 ^ direction.y < 0) {
+                direction.x += spreadRand;
+                direction.y += spreadRand;
+            }
+            else
+            {
+                direction.x -= spreadRand;
+                direction.y += spreadRand;
+            }
         }
         rigidbody2d.AddForce(direction * force);
     }
@@ -42,7 +48,7 @@ public class ProjectileScript : MonoBehaviour
         {
             return;
         }
-        Debug.Log(transform.position.magnitude + "  " + origin);
+
         if (transform.position.x > origin.x + distance|| transform.position.x < origin.x - distance || transform.position.y > origin.y + distance || transform.position.y < origin.y - distance)
         {
 

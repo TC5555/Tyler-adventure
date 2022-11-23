@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6592782033289341513}
   - component: {fileID: 8734321474138630093}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Ghost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -121,7 +121,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.037693977, y: -0.21609011}
+  m_Offset: {x: 0.037693977, y: -0.022949457}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -132,7 +132,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.6756954, y: 0.6757119}
+  m_Size: {x: 0.6756954, y: 1.0619931}
   m_EdgeRadius: 0
 --- !u!114 &6592782033289341513
 MonoBehaviour:
@@ -150,7 +150,7 @@ MonoBehaviour:
   speed: 3
   vertical: 0
   changeTime: 3
-  maxHealth: 3
+  maxHealth: 30
 --- !u!95 &8734321474138630093
 Animator:
   serializedVersion: 3
