@@ -15,16 +15,15 @@ public class EnemyScript : MonoBehaviour
     public int maxHealth = 30;
     public int health { get { return currentHealth; } }
     int currentHealth;
-
+    bool h;
     Color32 colorVal = new Color32(255,255,255,255);
     
     Rigidbody2D rigidbody2D;
     float timer;
-    int direction = 1;
+    Vector2 direction;
     bool alive = true;
-
+    
     Animator animator;
-
 
     void Start()
     {
@@ -68,13 +67,82 @@ public class EnemyScript : MonoBehaviour
             gameObject.GetComponent<Renderer>().material.color = colorVal;
         }
 
+        /*  RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
+          if (hit.collider != null)
+          {
+              NonPlayerCharacter character = hit.collider.GetComponent<NonPlayerCharacter>();
+              if (character != null)
+              {
+                  character.DisplayDialog();
+              }
+          }
+
+
+        RaycastHit2D hit;
+        do
+        {
+            hit = Physics2D.Raycast(transform.position, new Vector2(6,0), 6f, LayerMask.GetMask("Player"));
             
-        Physics.Raycast(transform.position, );
+        }
+        while (hit.collider!=null);
+        if(hit.collider!= null)
+        {
+            Debug.Log("notNull");
+        }
+    */
 
 
+        if (Physics2D.Raycast(transform.position, new Vector2(1, 0), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(6, 0) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(4, 2), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(4,2) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(2, 4), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(2, 4) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(0, 6), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(0, 6) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(-2,4), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(-2, 4) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(-4, 2), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(-4, 2) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(-6, 0), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(-6, 0) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(-4, -2), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(-4, -2) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(-2, -4), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(-2, -4) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(0, -6), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(0, -6) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(2, -4), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(2, -4) / 6;
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(4, -2), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(4, -2) / 6;
+        }
 
         timer -= Time.deltaTime;
-        
+
         if (timer < 0)
         {
             direction = -direction;
@@ -92,13 +160,14 @@ public class EnemyScript : MonoBehaviour
 
         Vector2 position = rigidbody2D.position;
 
-       
-            position.x += Time.deltaTime * speed * direction;
-            animator.SetFloat("Move X", direction);
-            animator.SetFloat("Move Y", 0);
-        
-       
-          
+        position.x += Time.deltaTime * speed * direction.x;
+        position.y += Time.deltaTime * speed * direction.y;
+     
+        animator.SetFloat("Move X", direction.x);
+        animator.SetFloat("Move Y", direction.y);
+
+
+
 
         rigidbody2D.MovePosition(position);
     }
@@ -112,6 +181,10 @@ public class EnemyScript : MonoBehaviour
             player.ChangeHealth(-1);
         }
     }
+
+    
+        
+    
 
     //Public because we want to call it from elsewhere like the projectile script
     public void Damage(int amount)

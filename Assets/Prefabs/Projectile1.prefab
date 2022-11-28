@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 1
-  spread: 1
+  spread: 0
   force: 300
-  spreadRange: 0.2
+  spreadRange: 0
   distance: 100
