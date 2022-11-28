@@ -25,6 +25,8 @@ public class EnemyScript : MonoBehaviour
     
     Animator animator;
 
+    float shotTimer;
+
     bool alertTimer;
     void Start()
     {
@@ -95,66 +97,82 @@ public class EnemyScript : MonoBehaviour
 
         if (Physics2D.Raycast(transform.position, new Vector2(6, 0), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(1, 0);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(4, 2), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(.93f,.46f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(3, 3), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(.7f, .7f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(2, 4), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(.46f, .93f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(0, 6), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(0, 1);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-2,4), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(-.93f, .46f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-3, 3), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(-.7f, .7f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-4, 2), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(-.46f, .93f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-6, 0), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(-1, 0);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-4, -2), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(-.93f, -.46f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-3, -3), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(-.7f, -.7f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-2, -4), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(-.46f, -.93f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(0, -6), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(0, -1);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(2, -4), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(.93f, -.46f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(3, -3), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(.7f, -.7f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(4, -2), 5f, LayerMask.GetMask("Player")))
         {
+            alertTimer = false;
             direction = new Vector2(.46f, -.93f);
         }
         else if(!alertTimer)
@@ -173,7 +191,11 @@ public class EnemyScript : MonoBehaviour
                 alertTimer = false;
             }
         }
-      
+
+        
+        float shotTimer;
+
+
     }
 
     void FixedUpdate()
