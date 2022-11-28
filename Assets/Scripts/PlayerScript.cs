@@ -170,7 +170,7 @@ GameObject ProjectilePrefab;
         
             projectile.Launch(lookDirection, transform.position);
         }
-
+        
         //animator.SetTrigger("Launch");
     }
 

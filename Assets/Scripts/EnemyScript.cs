@@ -15,7 +15,7 @@ public class EnemyScript : MonoBehaviour
     public int maxHealth = 30;
     public int health { get { return currentHealth; } }
     int currentHealth;
-    bool h;
+  
     Color32 colorVal = new Color32(255,255,255,255);
     
     Rigidbody2D rigidbody2D;
@@ -25,6 +25,7 @@ public class EnemyScript : MonoBehaviour
     
     Animator animator;
 
+    bool alertTimer;
     void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
@@ -92,62 +93,87 @@ public class EnemyScript : MonoBehaviour
     */
 
 
-        if (Physics2D.Raycast(transform.position, new Vector2(1, 0), 5f, LayerMask.GetMask("Player")))
+        if (Physics2D.Raycast(transform.position, new Vector2(6, 0), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(6, 0) / 6;
+            direction = new Vector2(1, 0);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(4, 2), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(4,2) / 6;
+            direction = new Vector2(.93f,.46f);
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(3, 3), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(.7f, .7f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(2, 4), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(2, 4) / 6;
+            direction = new Vector2(.46f, .93f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(0, 6), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(0, 6) / 6;
+            direction = new Vector2(0, 1);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-2,4), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(-2, 4) / 6;
+            direction = new Vector2(-.93f, .46f);
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(-3, 3), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(-.7f, .7f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-4, 2), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(-4, 2) / 6;
+            direction = new Vector2(-.46f, .93f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-6, 0), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(-6, 0) / 6;
+            direction = new Vector2(-1, 0);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-4, -2), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(-4, -2) / 6;
+            direction = new Vector2(-.93f, -.46f);
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(-3, -3), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(-.7f, -.7f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(-2, -4), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(-2, -4) / 6;
+            direction = new Vector2(-.46f, -.93f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(0, -6), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(0, -6) / 6;
+            direction = new Vector2(0, -1);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(2, -4), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(2, -4) / 6;
+            direction = new Vector2(.93f, -.46f);
+        }
+        else if (Physics2D.Raycast(transform.position, new Vector2(3, -3), 5f, LayerMask.GetMask("Player")))
+        {
+            direction = new Vector2(.7f, -.7f);
         }
         else if (Physics2D.Raycast(transform.position, new Vector2(4, -2), 5f, LayerMask.GetMask("Player")))
         {
-            direction = new Vector2(4, -2) / 6;
+            direction = new Vector2(.46f, -.93f);
         }
-
-        timer -= Time.deltaTime;
-
-        if (timer < 0)
+        else if(!alertTimer)
         {
-            direction = -direction;
-            timer = changeTime;
+            timer = 4f;
+            alertTimer = true;
         }
+        if (alertTimer)
+        {
+            timer -= Time.deltaTime;
+           
+            if (timer < 0)
+            {
+                direction *= 0;
+           
+                alertTimer = false;
+            }
+        }
+      
     }
 
     void FixedUpdate()
