@@ -14,8 +14,8 @@ TagManager:
   - Player
   - Confiner
   - Projectile
-  - 
-  - 
+  - EnemyProjectile
+  - Enemy
   - 
   - 
   - 

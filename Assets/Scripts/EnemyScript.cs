@@ -7,11 +7,12 @@ using UnityEngine;
 public class EnemyScript : MonoBehaviour
 {
     public ParticleSystem DeathParticles;
+    public ParticleSystem ShootParticles;
 
     public float speed;
-    public bool vertical;
-    public float changeTime = 3.0f;
 
+
+    public GameObject ProjectilePrefab;
     public int maxHealth = 30;
     public int health { get { return currentHealth; } }
     int currentHealth;
@@ -26,12 +27,12 @@ public class EnemyScript : MonoBehaviour
     Animator animator;
 
     float shotTimer;
-
+    bool canShoot = true;
     bool alertTimer;
     void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
-        timer = changeTime;
+
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
 
@@ -70,116 +71,36 @@ public class EnemyScript : MonoBehaviour
             gameObject.GetComponent<Renderer>().material.color = colorVal;
         }
 
-        /*  RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
-          if (hit.collider != null)
-          {
-              NonPlayerCharacter character = hit.collider.GetComponent<NonPlayerCharacter>();
-              if (character != null)
-              {
-                  character.DisplayDialog();
-              }
-          }
+        for(int i = 0; i < 6; i++)
+        {
+            if (Physics2D.Raycast(transform.position, new Vector2(6-i, 0+i), 5f, LayerMask.GetMask("Player")))
+            {
+                alertTimer = false;
+                direction = new Vector2(6-i, 0+i) / 6;
+            }
+            else if (Physics2D.Raycast(transform.position, new Vector2(0-i, 6-i), 5f, LayerMask.GetMask("Player")))
+            {
+                alertTimer = false;
+                direction = new Vector2(0 - i, 6 - i) / 6;
+            }
+            else  if (Physics2D.Raycast(transform.position, new Vector2(-6+i, 0-i), 5f, LayerMask.GetMask("Player")))
+            {
+                alertTimer = false;
+                direction = new Vector2(-6 + i, 0 - i) / 6;
+            }
+            else if (Physics2D.Raycast(transform.position, new Vector2(0+i, -6+i), 5f, LayerMask.GetMask("Player")))
+            {
+                alertTimer = false;
+                direction = new Vector2(0 + i, -6 + i) / 6;
+            }
+            else if (!alertTimer)
+            {
+                timer = 4f;
+                alertTimer = true;
+            }
 
-
-        RaycastHit2D hit;
-        do
-        {
-            hit = Physics2D.Raycast(transform.position, new Vector2(6,0), 6f, LayerMask.GetMask("Player"));
-            
         }
-        while (hit.collider!=null);
-        if(hit.collider!= null)
-        {
-            Debug.Log("notNull");
-        }
-    */
-
-
-        if (Physics2D.Raycast(transform.position, new Vector2(6, 0), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(1, 0);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(4, 2), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(.93f,.46f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(3, 3), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(.7f, .7f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(2, 4), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(.46f, .93f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(0, 6), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(0, 1);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(-2,4), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(-.93f, .46f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(-3, 3), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(-.7f, .7f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(-4, 2), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(-.46f, .93f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(-6, 0), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(-1, 0);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(-4, -2), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(-.93f, -.46f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(-3, -3), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(-.7f, -.7f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(-2, -4), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(-.46f, -.93f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(0, -6), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(0, -1);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(2, -4), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(.93f, -.46f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(3, -3), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(.7f, -.7f);
-        }
-        else if (Physics2D.Raycast(transform.position, new Vector2(4, -2), 5f, LayerMask.GetMask("Player")))
-        {
-            alertTimer = false;
-            direction = new Vector2(.46f, -.93f);
-        }
-        else if(!alertTimer)
-        {
-            timer = 4f;
-            alertTimer = true;
-        }
+   
         if (alertTimer)
         {
             timer -= Time.deltaTime;
@@ -192,8 +113,14 @@ public class EnemyScript : MonoBehaviour
             }
         }
 
-        
-        float shotTimer;
+        if (!direction.Equals(new Vector2(0, 0)) && canShoot)
+        {
+            Debug.Log("shoot " + direction);
+            shotTimer = 2f;
+            canShoot = false;
+            ShootParticles.Play();
+            Launch();
+        }
 
 
     }
@@ -230,10 +157,22 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
-    
-        
-    
 
+
+
+    void Launch()
+    {
+
+        
+            GameObject projectileObject = Instantiate(ProjectilePrefab, transform.position, Quaternion.identity);
+
+            ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
+
+            projectile.Launch(direction, transform.position);
+       
+
+        //animator.SetTrigger("Launch");
+    }
     //Public because we want to call it from elsewhere like the projectile script
     public void Damage(int amount)
     {
