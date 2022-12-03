@@ -26,17 +26,22 @@ public class ProjectileScript : MonoBehaviour
         active = true;
         if (spread)
         {
-            
+
             float spreadRand = Random.Range(-spreadRange, spreadRange);
-            if (direction.x < 0 ^ direction.y < 0) {
+            if (direction.x < 0 ^ direction.y < 0)
+            {
+                transform.Rotate(new Vector3(0, 0, Mathf.Atan2(direction.y, direction.x) * (180f / Mathf.PI) + Mathf.Atan2(direction.y + spreadRand, direction.x + spreadRand) * (180f / Mathf.PI)));
                 direction.x += spreadRand;
                 direction.y += spreadRand;
+
             }
             else
             {
+                transform.Rotate(new Vector3(0, 0, Mathf.Atan2(direction.y, direction.x) * (180f / Mathf.PI) + Mathf.Atan2(direction.y + spreadRand, direction.x - spreadRand) * (180f / Mathf.PI)));
                 direction.x -= spreadRand;
                 direction.y += spreadRand;
             }
+           
         }
         rigidbody2d.AddForce(direction * force);
     }
@@ -63,12 +68,22 @@ public class ProjectileScript : MonoBehaviour
         {
             return;
         }
+        PlayerScript p = other.collider.GetComponent<PlayerScript>();
+        if (p != null)
+        {
+            p.ChangeHealth(damageAmount);
+
+            Destroy(gameObject);
+        }
+        
         EnemyScript e = other.collider.GetComponent<EnemyScript>();
         if (e != null)
         {
             e.Damage(damageAmount);
+
+            Destroy(gameObject);
         }
-       
+
         Destroy(gameObject);
     }
 }

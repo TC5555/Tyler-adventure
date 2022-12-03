@@ -4,38 +4,41 @@ using UnityEngine;
 
 
 
-public class EnemyScript : MonoBehaviour
+public class EnemyScript : launchScript
 {
     public ParticleSystem DeathParticles;
-    public ParticleSystem ShootParticles;
+
 
     public float speed;
 
 
-    public GameObject ProjectilePrefab;
-    public int maxHealth = 30;
+    public int maxHealth;
     public int health { get { return currentHealth; } }
-    int currentHealth;
+    protected int currentHealth;
   
     Color32 colorVal = new Color32(255,255,255,255);
     
-    Rigidbody2D rigidbody2D;
-    float timer;
-    Vector2 direction;
-    bool alive = true;
-    
-    Animator animator;
+    protected new Rigidbody2D rigidbody2D;
+    protected float timer;
+    protected Vector2 direction;
+    public bool alive = true;
 
-    float shotTimer;
-    bool canShoot = true;
+    public float scanRange;
+
+    protected float divisions = 16;
+
+    public Animator animator;
+    protected bool scanning = true;
+
+
     bool alertTimer;
+
     void Start()
     {
+       
         rigidbody2D = GetComponent<Rigidbody2D>();
-
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
-
     }
 
     void Update()
@@ -44,12 +47,14 @@ public class EnemyScript : MonoBehaviour
 
         if (!alive)
         {
-            colorVal.a -= (byte)(750 * Time.deltaTime);
-            gameObject.GetComponent<Renderer>().material.color = colorVal;
-            if(colorVal.a < 3)
+            if (colorVal.a - (byte)(750 * Time.deltaTime) < 0)
             {
                 Destroy(gameObject);
             }
+
+            colorVal.a -= (byte)(750 * Time.deltaTime);
+            gameObject.GetComponent<Renderer>().material.color = colorVal;
+               
             return;
         }
 
@@ -71,67 +76,48 @@ public class EnemyScript : MonoBehaviour
             gameObject.GetComponent<Renderer>().material.color = colorVal;
         }
 
-        for(int i = 0; i < 6; i++)
+        if (scanning)
         {
-            if (Physics2D.Raycast(transform.position, new Vector2(6-i, 0+i), 5f, LayerMask.GetMask("Player")))
+            for (float i = 0f; i <= divisions; i++)
             {
-                alertTimer = false;
-                direction = new Vector2(6-i, 0+i) / 6;
-            }
-            else if (Physics2D.Raycast(transform.position, new Vector2(0-i, 6-i), 5f, LayerMask.GetMask("Player")))
-            {
-                alertTimer = false;
-                direction = new Vector2(0 - i, 6 - i) / 6;
-            }
-            else  if (Physics2D.Raycast(transform.position, new Vector2(-6+i, 0-i), 5f, LayerMask.GetMask("Player")))
-            {
-                alertTimer = false;
-                direction = new Vector2(-6 + i, 0 - i) / 6;
-            }
-            else if (Physics2D.Raycast(transform.position, new Vector2(0+i, -6+i), 5f, LayerMask.GetMask("Player")))
-            {
-                alertTimer = false;
-                direction = new Vector2(0 + i, -6 + i) / 6;
-            }
-            else if (!alertTimer)
-            {
-                timer = 4f;
-                alertTimer = true;
+                Vector2 angle = new Vector2(Mathf.Cos(2f * Mathf.PI * i / divisions), Mathf.Sin(2f * Mathf.PI * i / divisions));
+                // Debug.Log("I: " + 6.283f * i / divisions + " Quaternion: " + Mathf.Cos(6.283f * i / divisions) + " " + Mathf.Sin(6.283f * i / divisions));
+                if (Physics2D.Raycast(transform.position, angle, scanRange, LayerMask.GetMask("Player")))
+                {
+                    alertTimer = false;
+                    direction = angle;
+
+                    break;
+                }
+                else if (!alertTimer)
+                {
+                    timer = 4f;
+                    alertTimer = true;
+                }
             }
 
-        }
-   
-        if (alertTimer)
-        {
-            timer -= Time.deltaTime;
-           
-            if (timer < 0)
+            if (alertTimer)
             {
-                direction *= 0;
-           
-                alertTimer = false;
+                timer -= Time.deltaTime;
+
+                if (timer < 0)
+                {
+                    direction *= 0;
+
+                    alertTimer = false;
+                }
             }
         }
-
-        if (!direction.Equals(new Vector2(0, 0)) && canShoot)
-        {
-            Debug.Log("shoot " + direction);
-            shotTimer = 2f;
-            canShoot = false;
-            ShootParticles.Play();
-            Launch();
-        }
-
-
     }
 
     void FixedUpdate()
     {
-        //remember ! inverse the test, so if broken is true !broken will be false and return won’t be executed.
         if (!alive)
         {
             return;
         }
+        
+       
 
         Vector2 position = rigidbody2D.position;
 
@@ -160,19 +146,7 @@ public class EnemyScript : MonoBehaviour
 
 
 
-    void Launch()
-    {
-
-        
-            GameObject projectileObject = Instantiate(ProjectilePrefab, transform.position, Quaternion.identity);
-
-            ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
-
-            projectile.Launch(direction, transform.position);
-       
-
-        //animator.SetTrigger("Launch");
-    }
+    
     //Public because we want to call it from elsewhere like the projectile script
     public void Damage(int amount)
     {

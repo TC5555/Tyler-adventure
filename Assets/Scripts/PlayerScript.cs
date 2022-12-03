@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerScript : MonoBehaviour
+public class PlayerScript : launchScript
 {
     public float speed = 3.0f;
 
     public int maxHealth = 5;
-    //public ParticleSystem DamageParticles;
-GameObject ProjectilePrefab;
+    GameObject ProjectilePrefab;
 
+    GameObject ActiveWeapon;
 
     AudioSource audioSource;
     public int health { get { return currentHealth; } }
@@ -23,7 +23,6 @@ GameObject ProjectilePrefab;
     bool canShoot;
     float shootTimer;
     int shootMulti = 1;
-
     Rigidbody2D rigidbody2d;
     float horizontal;
     float vertical;
@@ -42,10 +41,14 @@ GameObject ProjectilePrefab;
         currentHealth = maxHealth;
         ProjectilePrefab = GameObject.Find("Projectile1");
     }
+    
+
 
     // Update is called once per frame
     void Update()
     {
+      
+
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
 
@@ -90,29 +93,8 @@ GameObject ProjectilePrefab;
         }
 
 
-        if(canShoot)
-            {
-            if (lookHeld)
-            {
-                canShoot = false;
-                shootTimer = timeShoot;
-
-                Launch();
-            }
-            else if (Input.GetKeyDown("1"))
-            {
-                timeShoot = 0.5f;
-                shootMulti = 1;
-                ProjectilePrefab = GameObject.Find("Projectile1");
-            }
-            else if (Input.GetKeyDown("2"))
-            {
-                timeShoot = .1f;
-                shootMulti = 3;
-                ProjectilePrefab = GameObject.Find("Projectile2");
-            }
-        }
-
+       
+            
        
         
     }
@@ -120,11 +102,8 @@ GameObject ProjectilePrefab;
     void FixedUpdate()
     {
         Vector2 position = rigidbody2d.position;
-        position.x = position.x + speed * horizontal * Time.deltaTime;
-        position.y = position.y + speed * vertical * Time.deltaTime;
-
-
-       
+        position.x += speed * horizontal * Time.deltaTime;
+        position.y += speed * vertical * Time.deltaTime;
 
         rigidbody2d.MovePosition(position);
 
@@ -159,20 +138,7 @@ GameObject ProjectilePrefab;
        // UIHealthBar.instance.SetValue(currentHealth / (float)maxHealth);
     }
 
-    void Launch()
-    {
-
-        for (int i = shootMulti; i > 0; i--)
-        {
-            GameObject projectileObject = Instantiate(ProjectilePrefab, rigidbody2d.position, Quaternion.identity);
-
-         ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
-        
-            projectile.Launch(lookDirection, transform.position);
-        }
-        
-        //animator.SetTrigger("Launch");
-    }
+    
 
     public void PlaySound(AudioClip clip)
     {
