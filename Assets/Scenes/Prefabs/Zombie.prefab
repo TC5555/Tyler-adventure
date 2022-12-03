@@ -5099,7 +5099,7 @@ MonoBehaviour:
   speed: 3.2
   maxHealth: 50
   alive: 1
-  scanRange: 7
+  scanRange: 10
   animator: {fileID: 5539616904920041788}
   ChargeParticles: {fileID: 5774385816218376202}
 --- !u!1 &5213488325240815963
@@ -5324,7 +5324,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 0, b: 0, a: 1}
+      maxColor: {r: 1, g: 0, b: 0.77254903, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ZombieScript : EnemyScript
 {
-    float chargeTimer = 8f;
+    float chargeTimer = 6f;
     public ParticleSystem ChargeParticles;
     bool particlePlayed = false;
     bool charged = false;
@@ -55,7 +55,7 @@ public class ZombieScript : EnemyScript
                 scanning = true;
                 animator.speed *= .2f;
                 speed *= .2f;
-                chargeTimer = 10f;
+                chargeTimer = 6f;
                 direction *= -1f;
 
             }

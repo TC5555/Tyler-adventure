@@ -16,7 +16,7 @@ public class EnemyScript : launchScript
     public int health { get { return currentHealth; } }
     protected int currentHealth;
   
-    Color32 colorVal = new Color32(255,255,255,255);
+    protected Color32 colorVal = new Color32(255,255,255,255);
     
     protected new Rigidbody2D rigidbody2D;
     protected float timer;
@@ -25,7 +25,7 @@ public class EnemyScript : launchScript
 
     public float scanRange;
 
-    protected float divisions = 16;
+    protected float divisions = 32;
 
     public Animator animator;
     protected bool scanning = true;

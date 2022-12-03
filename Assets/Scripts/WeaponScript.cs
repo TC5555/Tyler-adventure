@@ -4,17 +4,24 @@ using UnityEngine;
 
 public class WeaponScript : MonoBehaviour
 {
-    protected Vector2 direction;
+    Vector2 direction;
     public GameObject ProjectilePrefab;
-    protected Vector2 position;
-    protected bool canShoot;
-    protected float timer;
-    protected float shootTime;
+    Vector2 position;
+    bool canShoot;
+    float timer;
+    public float shootTime;
     bool lookHeld;
-
-    void update()
+    public int shootMulti;
+    Rigidbody2D rigidbody2d;
+    private void Start()
     {
-        if(!canShoot)
+        rigidbody2d = GetComponent<Rigidbody2D>(); 
+    }
+
+    void Update()
+    {
+        
+        if (!canShoot)
         {
             timer -= Time.deltaTime;
 
@@ -37,13 +44,18 @@ public class WeaponScript : MonoBehaviour
         this.lookHeld = lookHeld;
         this.direction = direction;
         this.position = position;
+        rigidbody2d.MovePosition(position);
     }
     void Launch()
     {
-        float shootAngle = Mathf.Atan2(direction.y, direction.x) * (180f / Mathf.PI);
-        GameObject projectileObject = Instantiate(ProjectilePrefab, position, Quaternion.Euler(0f, 0f, shootAngle));
-        ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
-        projectile.Launch(direction, transform.position);
+        for (int i = shootMulti; i > 0; i--)
+        {
+            float shootAngle = Mathf.Atan2(direction.y, direction.x) * (180f / Mathf.PI);
+            GameObject projectileObject = Instantiate(ProjectilePrefab, position, Quaternion.Euler(0f, 0f, shootAngle));
+            ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
+            projectile.Launch(direction, transform.position);
+        }
+        
     }
 
 }

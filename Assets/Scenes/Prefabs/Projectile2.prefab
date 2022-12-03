@@ -286,5 +286,5 @@ MonoBehaviour:
   damageAmount: 1
   spread: 1
   force: 250
-  spreadRange: 0.5
+  spreadRange: 45
   distance: 2

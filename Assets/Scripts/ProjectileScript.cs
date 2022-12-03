@@ -8,7 +8,7 @@ public class ProjectileScript : MonoBehaviour
     public int damageAmount;
     public bool spread;
     public float force;
-    public float spreadRange;
+    public int spreadRange;
     public int distance;
     bool active = false;
     Vector2 origin;
@@ -20,28 +20,21 @@ public class ProjectileScript : MonoBehaviour
         rigidbody2d = GetComponent<Rigidbody2D>();
     }
 
-    public void Launch(Vector2 direction, Vector2 TOrigin)
+    public void Launch(Vector2 direction, Vector2 origin)
     {
-        origin = TOrigin;
+        this.origin = origin;
         active = true;
         if (spread)
         {
+            float spreadRand = Random.Range(-spreadRange * Mathf.PI / 360f, spreadRange * Mathf.PI / 360f);
 
-            float spreadRand = Random.Range(-spreadRange, spreadRange);
-            if (direction.x < 0 ^ direction.y < 0)
-            {
-                transform.Rotate(new Vector3(0, 0, Mathf.Atan2(direction.y, direction.x) * (180f / Mathf.PI) + Mathf.Atan2(direction.y + spreadRand, direction.x + spreadRand) * (180f / Mathf.PI)));
-                direction.x += spreadRand;
-                direction.y += spreadRand;
+            float directionAngle = Mathf.Atan2(direction.y, direction.x);
 
-            }
-            else
-            {
-                transform.Rotate(new Vector3(0, 0, Mathf.Atan2(direction.y, direction.x) * (180f / Mathf.PI) + Mathf.Atan2(direction.y + spreadRand, direction.x - spreadRand) * (180f / Mathf.PI)));
-                direction.x -= spreadRand;
-                direction.y += spreadRand;
-            }
-           
+            transform.Rotate(new Vector3(0, 0, Mathf.Atan2(direction.y, direction.x) * (180f / Mathf.PI) + Mathf.Atan2(Mathf.Sin(directionAngle + spreadRand), Mathf.Cos(directionAngle + spreadRand)) * (180f / Mathf.PI)));
+          
+            direction.x = Mathf.Cos(directionAngle + spreadRand);
+            direction.y = Mathf.Sin(directionAngle + spreadRand);
+
         }
         rigidbody2d.AddForce(direction * force);
     }

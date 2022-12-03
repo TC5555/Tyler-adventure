@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerScript : launchScript
+public class PlayerScript : MonoBehaviour
 {
     public float speed = 3.0f;
 
     public int maxHealth = 5;
-    GameObject ProjectilePrefab;
 
     GameObject ActiveWeapon;
+    WeaponScript Weapon;
 
     AudioSource audioSource;
     public int health { get { return currentHealth; } }
@@ -19,10 +19,7 @@ public class PlayerScript : launchScript
     bool isInvincible;
     float invincibleTimer;
 
-    float timeShoot = 0.5f;
-    bool canShoot;
-    float shootTimer;
-    int shootMulti = 1;
+
     Rigidbody2D rigidbody2d;
     float horizontal;
     float vertical;
@@ -39,7 +36,7 @@ public class PlayerScript : launchScript
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         currentHealth = maxHealth;
-        ProjectilePrefab = GameObject.Find("Projectile1");
+        ActiveWeapon = GameObject.Find("BasicWeapon");
     }
     
 
@@ -91,12 +88,25 @@ public class PlayerScript : launchScript
             if (invincibleTimer < 0)
                 isInvincible = false;
         }
-
-
-       
-            
-       
         
+        if (Input.GetKey("1"))
+        {
+            Weapon = ActiveWeapon.GetComponent<WeaponScript>();
+            Weapon.set(false, new Vector2(0,0), new Vector2(-100, 0));
+            ActiveWeapon = GameObject.Find("BasicWeapon");
+        }
+        else if (Input.GetKey("2"))
+        {
+            Weapon = ActiveWeapon.GetComponent<WeaponScript>();
+            Weapon.set(false, new Vector2(0, 0), new Vector2(-100, 0));
+            ActiveWeapon = GameObject.Find("ShotgunWeapon");
+        }
+        else if (Input.GetKey("3"))
+        {
+            Weapon = ActiveWeapon.GetComponent<WeaponScript>();
+            Weapon.set(false, new Vector2(0, 0), new Vector2(-100, 0));
+            ActiveWeapon = GameObject.Find("SniperWeapon");
+        }
     }
 
     void FixedUpdate()
@@ -107,17 +117,8 @@ public class PlayerScript : launchScript
 
         rigidbody2d.MovePosition(position);
 
-        if (!canShoot)
-        {
-
-            shootTimer -= Time.deltaTime;
-   
-            if (shootTimer < 0)
-            {
-                canShoot = true;
-            }
-        }
-      
+        Weapon = ActiveWeapon.GetComponent<WeaponScript>();
+        Weapon.set(lookHeld, lookDirection, position);
     }
 
     public void ChangeHealth(int amount)
