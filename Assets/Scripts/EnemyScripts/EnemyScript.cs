@@ -22,7 +22,7 @@ public class EnemyScript : launchScript
     protected float timer;
     protected Vector2 direction;
     public bool alive = true;
-
+    public GameObject pickupPrefab;
     public float scanRange;
 
     protected float divisions = 32;
@@ -30,6 +30,8 @@ public class EnemyScript : launchScript
     public Animator animator;
     protected bool scanning = true;
 
+    public float percentHealthDropChance;
+    public int amountHealthDropped;
 
     bool alertTimer;
 
@@ -139,16 +141,26 @@ public class EnemyScript : launchScript
 
         if (player != null)
         {
-            player.ChangeHealth(-1);
+            player.ChangeHealth(-2);
+        }
+    }
+
+    void DropHealth()
+    {
+        for (int i = amountHealthDropped; i > 0; i--)
+        {
+            float Rand = Random.Range(0, 100);
+            if (Rand <= percentHealthDropChance)
+            {
+                GameObject HealthPickupObject = Instantiate(pickupPrefab, rigidbody2D.position, Quaternion.identity);
+            }
         }
     }
 
 
 
-
-    
-    //Public because we want to call it from elsewhere like the projectile script
-    public void Damage(int amount)
+//Public because we want to call it from elsewhere like the projectile script
+public void Damage(int amount)
     {
         currentHealth -= amount;
         if (currentHealth == 0)
@@ -156,7 +168,7 @@ public class EnemyScript : launchScript
 
             gameObject.GetComponent<Renderer>().material.color = colorVal;
             DeathParticles.Play();
-
+            DropHealth();
 
             alive = false;
             rigidbody2D.simulated = false;
