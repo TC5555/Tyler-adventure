@@ -15,6 +15,8 @@ public class PlayerScript : MonoBehaviour
     bool dodging = false;
     float isDodging;
 
+    float isInteracting;
+
     int healAmount;
     int healMax = 4;
     float isHealing;
@@ -40,8 +42,10 @@ public class PlayerScript : MonoBehaviour
     public float timeInvincible = 2.0f;
     bool isInvincible;
     float invincibleTimer;
+
     float staminaTimer;
     float staminaCooldown = 1f;
+
     float dodgeTimer;
     float dodgeTime = .2f;
     float dodgeCooldown = 1f;
@@ -49,18 +53,20 @@ public class PlayerScript : MonoBehaviour
     Rigidbody2D rigidbody2d;
     float horizontal;
     float vertical;
+
     float horizontalShoot;
     float verticalShoot;
+    
     Animator animator;
+
     Vector2 moveDirection = new Vector2(1, 0);
     Vector2 lookDirection = new Vector2(1, 0);
     bool lookHeld;
     bool moveHeld;
 
-    ArrayList Weapons = new ArrayList();
+    public ArrayList Weapons { get; set;}
     int currentWeapon = 0;
-
-    // Start is called before the first frame update
+    
     void Start()
     {
         rigidbody2d = GetComponent<Rigidbody2D>();
@@ -75,14 +81,11 @@ public class PlayerScript : MonoBehaviour
         healAmount = healMax;
 
         UIWeaponDisplayScript.instance.SetValue(ActiveWeapon.GetComponent<SpriteRenderer>().sprite);
+        Weapons = new ArrayList();
         Weapons.Add("BasicWeapon");
-        Weapons.Add("ShotgunWeapon");
       
     }
     
-
-
-    // Update is called once per frame
     void Update()
     {
         
@@ -110,8 +113,9 @@ public class PlayerScript : MonoBehaviour
                 moveHeld = false;
             }
 
-            if (!Mathf.Approximately(shoot.x, 0.0f) || !Mathf.Approximately(shoot.y, 0.0f))
+            if ((!Mathf.Approximately(shoot.x, 0.0f) || !Mathf.Approximately(shoot.y, 0.0f)) && !healing)
             {
+               
                 lookHeld = true;
                 lookDirection.Set(shoot.x, shoot.y);
                 lookDirection.Normalize();
@@ -173,7 +177,7 @@ public class PlayerScript : MonoBehaviour
         {
             healAmount -= 1;
             UIHealingTextScript.instance.SetValue(healAmount);
-            ChangeHealth(1);
+            ChangeHealth(2);
             healing = false;
             speed *= 2f;
         }
@@ -194,7 +198,6 @@ public class PlayerScript : MonoBehaviour
 
         if(!Mathf.Approximately(isSwitching, 0.0f) && switchingTimer <= 0)
         {
-           // Debug.Log("Switching " + Weapons.Count + " " + currentWeapon + " " + isSwitching);
             if(isSwitching > 0)
             {
                 if (Weapons.Count == currentWeapon -1)
@@ -227,6 +230,28 @@ public class PlayerScript : MonoBehaviour
         }
 
         switchingTimer -= Time.deltaTime;
+
+        isInteracting = Input.GetAxis("Interact");
+
+        if(isInteracting > .1f)
+        {
+            for (float i = 0f; i <= 8; i++)
+            {
+                Vector2 angle = new Vector2(Mathf.Cos(2f * Mathf.PI * i / 8), Mathf.Sin(2f * Mathf.PI * i / 8));
+                // Debug.Log("I: " + 6.283f * i / divisions + " Quaternion: " + Mathf.Cos(6.283f * i / divisions) + " " + Mathf.Sin(6.283f * i / divisions));
+                if (Physics2D.Raycast(transform.position, angle, 3f, LayerMask.GetMask("Interactable")))
+                {
+                    RaycastHit2D hit = Physics2D.Raycast(transform.position, angle, 3f, LayerMask.GetMask("Interactable"));
+
+                    InteractableScript interactable = hit.collider.GetComponent<InteractableScript>();
+
+                    interactable.Interact();
+
+                    break;
+                }
+              
+            }
+        }
 
     }
 

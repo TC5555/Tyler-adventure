@@ -168,8 +168,10 @@ public void Damage(int amount)
 
             gameObject.GetComponent<Renderer>().material.color = colorVal;
             DeathParticles.Play();
-            DropHealth();
-
+            if (gameObject.tag != "SpawnedEnemy")
+            {
+                DropHealth();
+            }
             alive = false;
             rigidbody2D.simulated = false;
 

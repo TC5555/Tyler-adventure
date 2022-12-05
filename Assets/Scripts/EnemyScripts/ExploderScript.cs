@@ -68,6 +68,7 @@ public class ExploderScript : EnemyScript
                 }
                 explosionEffects.Play();
                 alive = false;
+                rigidbody2D.simulated = false;
             }
         }
     }

@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - SpawnedEnemy
+  - Spawner
+  - Barrier
   layers:
   - Default
   - TransparentFX
@@ -17,8 +20,8 @@ TagManager:
   - EnemyProjectile
   - Enemy
   - Pickup
-  - 
-  - 
+  - Trigger
+  - Interactable
   - 
   - 
   - 
