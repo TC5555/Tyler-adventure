@@ -177,6 +177,7 @@ public class PlayerScript : MonoBehaviour
         {
             healAmount -= 1;
             UIHealingTextScript.instance.SetValue(healAmount);
+            UIStaminaBarScript.instance.SetValue(healAmount / (float)healMax);
             ChangeHealth(2);
             healing = false;
             speed *= 2f;
