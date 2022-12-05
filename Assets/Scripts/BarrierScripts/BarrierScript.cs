@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BarrierScript : MonoBehaviour
 {
+    public bool confined;
     void Awake()
     {
         gameObject.SetActive(false);
@@ -12,6 +13,13 @@ public class BarrierScript : MonoBehaviour
     {
         if (GameObject.FindGameObjectWithTag("SpawnedEnemy")==null&&GameObject.FindGameObjectWithTag("Spawner") == null)
         {
+            if (confined)
+            {
+                ConfinerScript Confiner = GameObject.Find("CameraConfiner").GetComponent<ConfinerScript>();
+               
+                Confiner.polygonCollider2D.SetPath(0,Confiner.originalPoints);
+
+            }
             Destroy(gameObject);
         }
     }

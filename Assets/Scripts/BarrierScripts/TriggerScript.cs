@@ -4,9 +4,18 @@ using UnityEngine;
 
 public class TriggerScript : MonoBehaviour
 {
+    public bool cameraLocked;
+    public Vector2[] points;
     void OnTriggerEnter2D(Collider2D other)
     {
-         foreach (Transform child in transform)
+        if (cameraLocked)
+        {
+            ConfinerScript Confiner = GameObject.Find("CameraConfiner").GetComponent<ConfinerScript>();
+
+            Confiner.polygonCollider2D.SetPath(0, points);
+
+        }
+        foreach (Transform child in transform)
          {              
                  child.gameObject.SetActive(true);
          }

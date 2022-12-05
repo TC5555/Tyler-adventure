@@ -283,8 +283,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5174c4da186e46ea952216531a43360, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageAmount: 1
+  damageAmount: 2
   spread: 1
   force: 250
   spreadRange: 45
-  distance: 2
+  distance: 5
