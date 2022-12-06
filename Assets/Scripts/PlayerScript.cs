@@ -64,6 +64,8 @@ public class PlayerScript : MonoBehaviour
     bool lookHeld;
     bool moveHeld;
 
+    public bool healUsesText;
+
     public ArrayList Weapons { get; set;}
     int currentWeapon = 0;
     
@@ -77,13 +79,17 @@ public class PlayerScript : MonoBehaviour
         ActiveWeapon = GameObject.Find("BasicWeapon");
         WeaponScr = ActiveWeapon.GetComponent<WeaponScript>();
 
-        UIHealingTextScript.instance.SetValue(healMax);
+        if (healUsesText)
+        {
+            UIHealingTextScript.instance.gameObject.SetActive(true);
+            UIHealingTextScript.instance.SetValue(healMax);
+        }
         healAmount = healMax;
 
         UIWeaponDisplayScript.instance.SetValue(ActiveWeapon.GetComponent<SpriteRenderer>().sprite);
         Weapons = new ArrayList();
         Weapons.Add("BasicWeapon");
-      
+
     }
     
     void Update()
@@ -141,7 +147,7 @@ public class PlayerScript : MonoBehaviour
         if (sprinting)
         {
             currentStamina -= 20f * Time.deltaTime;
-            UIStaminaBarScript.instance.SetValue(currentStamina / (float)maxStamina);
+            UIStaminaBarScript.instance.SetValue(true, currentStamina / (float)maxStamina);
             if (currentStamina <= 0)
             {
                 staminaTimer = staminaCooldown;
@@ -158,7 +164,7 @@ public class PlayerScript : MonoBehaviour
             {
                 currentStamina += 15f * Time.deltaTime;
             }
-            UIStaminaBarScript.instance.SetValue(currentStamina / (float)maxStamina);
+            UIStaminaBarScript.instance.SetValue(true,currentStamina / (float)maxStamina);
             
         }
 
@@ -176,8 +182,11 @@ public class PlayerScript : MonoBehaviour
         if(healTimer <= 0 && healing)
         {
             healAmount -= 1;
-            UIHealingTextScript.instance.SetValue(healAmount);
-            UIStaminaBarScript.instance.SetValue(healAmount / (float)healMax);
+            if (UIHealingTextScript.instance.isActiveAndEnabled)
+            {
+                UIHealingTextScript.instance.SetValue(healAmount);
+            }
+            UIHealthUses.instance.SetValue(false,(float)healAmount/healMax);
             ChangeHealth(2);
             healing = false;
             speed *= 2f;
@@ -187,7 +196,7 @@ public class PlayerScript : MonoBehaviour
 
         isHealing = Input.GetAxis("Heal");
 
-        if (healAmount >= 0 && isHealing > .2f && !healing && !sprinting && health != maxHealth)
+        if (healAmount > 0 && isHealing > .2f && !healing && !sprinting && health != maxHealth)
         {
             Debug.Log("healing");
             healing = true;
@@ -274,7 +283,7 @@ public class PlayerScript : MonoBehaviour
                 lookHeld = false;
                 speed *= 5;
                 currentStamina -= 40f;
-                UIStaminaBarScript.instance.SetValue(currentStamina / (float)maxStamina);
+                UIStaminaBarScript.instance.SetValue(true,currentStamina / (float)maxStamina);
                 if (currentStamina <= 0)
                 {
                     staminaTimer = staminaCooldown *2f;
@@ -323,7 +332,7 @@ public class PlayerScript : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         Debug.Log(currentHealth); 
        
-        UIHealthBarScript.instance.SetValue(currentHealth / (float)maxHealth);
+        UIHealthBarScript.instance.SetValue(true,currentHealth / (float)maxHealth);
     }
 
     

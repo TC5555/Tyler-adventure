@@ -6,14 +6,24 @@ using UnityEngine.UI;
 public class UIBarScript : MonoBehaviour
 {
     public Image mask;
-    float originalSize;
+    Vector2 originalSize;
     void Start()
     {
-        originalSize = mask.rectTransform.rect.width;
+        
+        originalSize.x = mask.rectTransform.rect.width;
+        originalSize.y = mask.rectTransform.rect.height;
     }
 
-    public void SetValue(float value)
+    public void SetValue(bool horizontal, float value)
     {
-        mask.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, originalSize * value);
+        if (horizontal)
+        {
+            mask.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, originalSize.x * value);
+        }
+        else
+        {
+            Debug.Log(value);
+            mask.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, originalSize.y * value);
+        }
     }
 }

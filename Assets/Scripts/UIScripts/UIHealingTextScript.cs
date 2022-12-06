@@ -9,6 +9,7 @@ public class UIHealingTextScript : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        gameObject.SetActive(false);
     }
 
     public void SetValue(float value)
