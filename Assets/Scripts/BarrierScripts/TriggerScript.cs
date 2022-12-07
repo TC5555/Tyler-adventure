@@ -27,11 +27,13 @@ public class TriggerScript : MonoBehaviour
     }
     IEnumerator SpawnTimeDelay()
     {
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.25f);
+
+        cinemachineConfiner.m_Damping = 0.5f;
+
+        yield return new WaitForSeconds(.25f);
 
         cinemachineConfiner.m_Damping = 0;
-
-
     }
 
 }

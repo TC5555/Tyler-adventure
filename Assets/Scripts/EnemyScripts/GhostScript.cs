@@ -33,11 +33,21 @@ public class GhostScript : EnemyScript
             }
             else if (shotTimer <= 0f)
             {
-                Launch(direction, rigidbody2D.position, 1, ProjectilePrefab);
+                Launch();
                 shotTimer = 2f;
                 particlePlayed = false;
             }
 
         }
+    }
+    void Launch()
+    {
+       
+            float shootAngle = Mathf.Atan2(direction.y, direction.x) * (180f / Mathf.PI);
+            GameObject projectileObject = Instantiate(ProjectilePrefab, rigidbody2D.position, Quaternion.Euler(0f, 0f, shootAngle));
+            ProjectileScript projectile = projectileObject.GetComponent<ProjectileScript>();
+            projectile.Launch(direction, rigidbody2D.position);
+        
+
     }
 }

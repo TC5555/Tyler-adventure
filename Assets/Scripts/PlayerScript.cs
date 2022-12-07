@@ -66,8 +66,9 @@ public class PlayerScript : MonoBehaviour
 
     public bool healUsesText;
 
-    public ArrayList Weapons { get; set;}
-    int currentWeapon = 0;
+    public int weaponChildrenStart;
+
+    int currentWeapon;
     
     void Start()
     {
@@ -76,7 +77,10 @@ public class PlayerScript : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         currentHealth = maxHealth;
         currentStamina = maxStamina;
-        ActiveWeapon = GameObject.Find("BasicWeapon");
+        ActiveWeapon = transform.GetChild(weaponChildrenStart).gameObject;
+        ActiveWeapon.SetActive(true);
+        currentWeapon = weaponChildrenStart;
+
         WeaponScr = ActiveWeapon.GetComponent<WeaponScript>();
 
         if (healUsesText)
@@ -87,8 +91,6 @@ public class PlayerScript : MonoBehaviour
         healAmount = healMax;
 
         UIWeaponDisplayScript.instance.SetValue(ActiveWeapon.GetComponent<SpriteRenderer>().sprite);
-        Weapons = new ArrayList();
-        Weapons.Add("BasicWeapon");
 
     }
     
@@ -210,9 +212,9 @@ public class PlayerScript : MonoBehaviour
         {
             if(isSwitching > 0)
             {
-                if (Weapons.Count == currentWeapon -1)
+                if (currentWeapon == transform.childCount -1)
                 {
-                    currentWeapon = 0;
+                    currentWeapon = weaponChildrenStart;
 
                 }
                 else
@@ -222,20 +224,21 @@ public class PlayerScript : MonoBehaviour
             }
             else
             {
-                if (currentWeapon -1 < 0)
+                if (currentWeapon == weaponChildrenStart)
                 {
-                    currentWeapon = Weapons.Count - 1;
+                    currentWeapon = transform.childCount - 1;
                 }
                 else
                 {
                     currentWeapon--;
                 }
             }
-            WeaponScr.set(false, new Vector2(0, 0), new Vector2(-100, 0)); 
-        
-            ActiveWeapon = GameObject.Find((string)Weapons.ToArray()[currentWeapon]);
+            ActiveWeapon.SetActive(false);
+            Debug.Log(currentWeapon);
+            ActiveWeapon = transform.GetChild(currentWeapon).gameObject;
             WeaponScr = ActiveWeapon.GetComponent<WeaponScript>();
             UIWeaponDisplayScript.instance.SetValue(ActiveWeapon.GetComponent<SpriteRenderer>().sprite);
+            ActiveWeapon.SetActive(true);
             switchingTimer = switchingCooldown;
         }
 
@@ -297,20 +300,20 @@ public class PlayerScript : MonoBehaviour
                 speed *= 1.5f;
                 sprinting = true;
             }
-            if ((isSprinting < .2f || staminaTimer >= 0) && sprinting)
-            {
-                speed /= 1.5f;
-                sprinting = false;
-            }
+        }
+        if ((isSprinting < .2f || staminaTimer >= 0) && sprinting)
+        {
+            speed /= 1.5f;
+            sprinting = false;
         }
 
-      
+
         position.x += speed * horizontal * Time.deltaTime;
         position.y += speed * vertical * Time.deltaTime;
 
         rigidbody2d.MovePosition(position);
 
-        WeaponScr.set(lookHeld, lookDirection, position);
+        WeaponScr.set(lookHeld, lookDirection);
     }
 
     public void ChangeHealth(int amount)

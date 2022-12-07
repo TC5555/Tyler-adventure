@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WeaponChestScript : InteractableScript
 {
-    public string WeaponAdded;
+    public GameObject WeaponAdded;
     public override void Interact() => addWeapon();
 
     bool isOpen = false;
@@ -13,9 +13,10 @@ public class WeaponChestScript : InteractableScript
 {
         if (!isOpen)
         {
-            GameObject Player = GameObject.FindGameObjectWithTag("Player");
-            PlayerScript PlayerScr = Player.GetComponent<PlayerScript>();
-            PlayerScr.Weapons.Add(WeaponAdded);
+           // GameObject Player = GameObject.FindGameObjectWithTag("Player");
+            GameObject W = Instantiate(WeaponAdded);
+            //PlayerScript PlayerScr = Player.GetComponent<PlayerScript>();
+            W.transform.SetParent(GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>().transform,false);
             isOpen = true;
         }
 }

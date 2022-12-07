@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 
-public class EnemyScript : launchScript
+public class EnemyScript : MonoBehaviour
 {
     public ParticleSystem DeathParticles;
 
