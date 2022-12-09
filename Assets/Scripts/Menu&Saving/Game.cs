@@ -18,7 +18,7 @@ public class Game : MonoBehaviour
 
     private void Awake()
     {
-        Pause();
+        Unpause();
     }
 
  
@@ -67,7 +67,7 @@ public class Game : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/gamesave.save");
         bf.Serialize(file, save);
-      
+        Unpause();
         Debug.Log("Game Saved");
     }
 
