@@ -107,15 +107,25 @@ public class Game : MonoBehaviour
         string json = JsonUtility.ToJson(save);
 
         Debug.Log("Saving as JSON: " + json);
+
+        save = JsonUtility.FromJson<Save>(json);
+
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(Application.persistentDataPath + "/gamesave.save");
+        bf.Serialize(file, save);
+        Debug.Log("Saving as Save: " + save);
+
     }
 
     private Save CreateSaveGameObject()
     {
         Save save = new Save();
         int i = 0;
-        foreach (GameObject ob in progress.transform)
+        foreach (Transform t in progress.transform)
         {
-            if (ob.activeSelf)
+            GameObject ob = t.gameObject;
+            if (
+                ob.activeSelf)
             {
                 save.alive.Add(ob);
                 i++;
