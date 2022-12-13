@@ -51,9 +51,9 @@ public class HealthPickupScript : MonoBehaviour
     void OnCollisionEnter2D(Collision2D other)
     {
         PlayerScript p = other.collider.GetComponent<PlayerScript>();
-        if (p != null&&p.health!=p.maxHealth)
+        if (p != null&&p.currentHealth!=p.maxHealth)
         {
-            Debug.Log(p.health + " " + p.maxHealth);
+            Debug.Log(p.currentHealth + " " + p.maxHealth);
             p.ChangeHealth(healAmount);
 
             Destroy(gameObject);

@@ -13,9 +13,13 @@ public class Game : MonoBehaviour
     [SerializeField]
     private GameObject menu;
     [SerializeField]
-    private GameObject progress;
+    private GameObject Triggers;
+    [SerializeField]
+    private GameObject Enemies;
+    [SerializeField]
+    private GameObject Chests;
+
     private bool isPaused = false;
-    public PlayerData playerData { get;set; }
 
     private void Awake()
     {
@@ -63,12 +67,7 @@ public class Game : MonoBehaviour
     {
         // 1
         Save save = CreateSaveGameObject();
-
-        PlayerData data = save.player;
-
-        GameObject player = GameObject.FindGameObjectWithTag("player");
         
-    
 
         // 2
         BinaryFormatter bf = new BinaryFormatter();
@@ -91,23 +90,51 @@ public class Game : MonoBehaviour
             file.Close();
 
             // 3
-            for (int i = 0; i < save.alive.Count; i++)
+            for (int i = 0; i < save.triggers.Count; i++)
             {
-                
-                progress.transform.GetChild(i).gameObject.SetActive(save.alive[i]) ;
+                Triggers.transform.GetChild(i).gameObject.SetActive(save.triggers[i]);
             }
-            /*foreach (string triggerActive in save.alive)
+
+            for (int i = 0; i < save.chests.Count; i++)
             {
-                
-                progress.transform.Find("0");
-            }*/
+                Chests.transform.GetChild(i).gameObject.SetActive(save.chests[i]);
+            }
 
-            PlayerData data = save.player;
 
-            GameObject player = GameObject.FindGameObjectWithTag("player");
+            for (int i = 0; i < save.enemies.Count; i++)
+            {
+                EnemyObjectData dataE = save.enemies[i];
 
-            player.GetComponent<PlayerScript>().changeValues(new Vector2(data.pos[1], data.pos[2]), data.maxHealth, data.maxStamina, data.healthHealed);
-          
+               EnemyScript enemy = Enemies.transform.GetChild(i).GetComponent<EnemyScript>();
+
+               enemy.transform.position = new Vector2(dataE.pos[0],dataE.pos[1]);
+
+                enemy.currentHealth = dataE.health;
+
+                enemy.gameObject.SetActive(dataE.isActive);
+            }
+
+
+            PlayerData dataP = save.player;
+
+            PlayerScript playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
+
+            playerScript.transform.position = new Vector2(dataP.pos[0], dataP.pos[1]);
+
+            playerScript.maxHealth = dataP.maxHealth;
+
+            playerScript.currentHealth = dataP.health;
+
+            playerScript.maxStamina = dataP.maxStamina;
+
+            playerScript.currentStamina = dataP.stamina;
+
+            playerScript.healthHealed = dataP.healthHealed;
+
+            playerScript.healAmount = dataP.healAmount;
+
+
+            playerScript.updateUI();
 
             Debug.Log("Game Loaded");
 
@@ -119,35 +146,64 @@ public class Game : MonoBehaviour
         }
     }
 
-    public void SaveAsJSON()
-    {
-        Save save = CreateSaveGameObject();
-        string json = JsonUtility.ToJson(save);
-
-        Debug.Log("Saving as JSON: " + json);
-
-        save = JsonUtility.FromJson<Save>(json);
-
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + "/gamesave.save");
-        bf.Serialize(file, save);
-        Debug.Log("Saving as Save: " + save);
-
-    }
-
     private Save CreateSaveGameObject()
     {
         Save save = new Save();
-        foreach (Transform t in progress.transform)
+
+        foreach (Transform t in Triggers.transform)
         {
             GameObject ob = t.gameObject;
-            if (
-                ob.activeSelf)
-            {
-                save.alive.Add(ob.GetComponent<Rigidbody2D>().IsAwake());
-          
-            }
+
+            save.triggers.Add(ob.activeSelf);
+ 
         }
+
+        foreach (Transform t in Chests.transform)
+        {
+
+            WeaponChestScript ob = t.gameObject.GetComponent<WeaponChestScript>();
+
+            save.chests.Add(ob.isOpen);
+        }
+
+
+        foreach (Transform t in Enemies.transform)
+        {
+            EnemyObjectData dataE = new EnemyObjectData();
+
+            EnemyScript enemy = t.gameObject.GetComponent<EnemyScript>();
+
+            dataE.pos.Add(enemy.transform.position.x);
+            dataE.pos.Add(enemy.transform.position.y);
+
+            dataE.health = enemy.currentHealth;
+
+            dataE.isActive = enemy.isActiveAndEnabled;
+
+            save.enemies.Add(dataE);
+        }
+
+        PlayerData dataP = new PlayerData();
+
+        PlayerScript playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
+
+        dataP.pos.Add(playerScript.transform.position.x);
+        dataP.pos.Add(playerScript.transform.position.y);
+
+        dataP.maxHealth = playerScript.maxHealth;
+
+        dataP.health = playerScript.currentHealth;
+
+        dataP.maxStamina = playerScript.maxStamina;
+
+        dataP.stamina = playerScript.currentStamina;
+
+        dataP.healthHealed = playerScript.healthHealed;
+
+        dataP.healAmount = playerScript.healAmount;
+
+        save.player = dataP;
+
 
         return save;
     }

@@ -13,8 +13,8 @@ public class EnemyScript : MonoBehaviour
 
 
     public int maxHealth;
-    public int health { get { return currentHealth; } }
-    protected int currentHealth;
+
+    public float currentHealth;
   
     protected Color32 colorVal = new Color32(255,255,255,255);
     
@@ -51,7 +51,7 @@ public class EnemyScript : MonoBehaviour
         {
             if (colorVal.a - (byte)(750 * Time.deltaTime) < 0)
             {
-                Destroy(gameObject);
+                gameObject.SetActive(false);
             }
 
             colorVal.a -= (byte)(750 * Time.deltaTime);

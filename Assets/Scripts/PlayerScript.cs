@@ -8,8 +8,8 @@ public class PlayerScript : MonoBehaviour
 
     public int maxHealth = 10;
 
-    int maxStamina = 100;
-    float currentStamina;
+    public int maxStamina = 100;
+    public float currentStamina;
     bool sprinting = false;
     float isSprinting;
     bool dodging = false;
@@ -17,8 +17,8 @@ public class PlayerScript : MonoBehaviour
 
     float isInteracting;
 
-    int healthHealed = 2;
-    int healAmount;
+    public int healthHealed = 2;
+    public int healAmount;
     int healMax = 4;
     float isHealing;
     float healTimer;
@@ -37,8 +37,7 @@ public class PlayerScript : MonoBehaviour
     WeaponScript WeaponScr;
 
     AudioSource audioSource;
-    public int health { get { return currentHealth; } }
-    int currentHealth;
+    public float currentHealth;
 
     public float timeInvincible = 2.0f;
     bool isInvincible;
@@ -70,7 +69,8 @@ public class PlayerScript : MonoBehaviour
     public int weaponChildrenStart;
 
     int currentWeapon;
-    
+
+
     void Start()
     {
         rigidbody2d = GetComponent<Rigidbody2D>();
@@ -199,7 +199,7 @@ public class PlayerScript : MonoBehaviour
 
         isHealing = Input.GetAxis("Heal");
 
-        if (healAmount > 0 && isHealing > .2f && !healing && !sprinting && health != maxHealth)
+        if (healAmount > 0 && isHealing > .2f && !healing && !sprinting && currentHealth != maxHealth)
         {
             Debug.Log("healing");
             healing = true;
@@ -266,7 +266,6 @@ public class PlayerScript : MonoBehaviour
               
             }
         }
-
     }
 
     void FixedUpdate()
@@ -339,16 +338,22 @@ public class PlayerScript : MonoBehaviour
         UIHealthBarScript.instance.SetValue(true,currentHealth / (float)maxHealth);
     }
 
-    public void changeValues(Vector2 pos, int maxHealth, int maxStamina, int healthHealed)
+    public void updateUI()
     {
-        rigidbody2d.position = pos;
-        this.maxHealth = maxHealth;
-        this.maxStamina = maxStamina;
-        this.healthHealed = healthHealed;
+        UIWeaponDisplayScript.instance.SetValue(ActiveWeapon.GetComponent<SpriteRenderer>().sprite);
+        UIHealthBarScript.instance.SetValue(true, currentHealth / (float)maxHealth);
+        UIStaminaBarScript.instance.SetValue(true, currentStamina / (float)maxStamina);
+        if (UIHealingTextScript.instance.isActiveAndEnabled)
+        {
+            UIHealingTextScript.instance.SetValue(healAmount);
+        }
+        UIHealthUses.instance.SetValue(false, (float)healAmount / healMax);
     }
 
     public void PlaySound(AudioClip clip)
     {
         audioSource.PlayOneShot(clip);
     }
+
+
 }
