@@ -17,6 +17,7 @@ public class PlayerScript : MonoBehaviour
 
     float isInteracting;
 
+    int healthHealed = 2;
     int healAmount;
     int healMax = 4;
     float isHealing;
@@ -189,7 +190,7 @@ public class PlayerScript : MonoBehaviour
                 UIHealingTextScript.instance.SetValue(healAmount);
             }
             UIHealthUses.instance.SetValue(false,(float)healAmount/healMax);
-            ChangeHealth(2);
+            ChangeHealth(healthHealed);
             healing = false;
             speed *= 2f;
         }
@@ -338,7 +339,13 @@ public class PlayerScript : MonoBehaviour
         UIHealthBarScript.instance.SetValue(true,currentHealth / (float)maxHealth);
     }
 
-    
+    public void changeValues(Vector2 pos, int maxHealth, int maxStamina, int healthHealed)
+    {
+        rigidbody2d.position = pos;
+        this.maxHealth = maxHealth;
+        this.maxStamina = maxStamina;
+        this.healthHealed = healthHealed;
+    }
 
     public void PlaySound(AudioClip clip)
     {

@@ -9,12 +9,13 @@ using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
-  
+
     [SerializeField]
     private GameObject menu;
     [SerializeField]
     private GameObject progress;
     private bool isPaused = false;
+    public PlayerData playerData { get;set; }
 
     private void Awake()
     {
@@ -63,6 +64,12 @@ public class Game : MonoBehaviour
         // 1
         Save save = CreateSaveGameObject();
 
+        PlayerData data = save.player;
+
+        GameObject player = GameObject.FindGameObjectWithTag("player");
+        
+    
+
         // 2
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/gamesave.save");
@@ -84,11 +91,22 @@ public class Game : MonoBehaviour
             file.Close();
 
             // 3
-            foreach (GameObject g in save.alive)
+            for (int i = 0; i < save.alive.Count; i++)
             {
-                g.SetActive(true);
+                
+                progress.transform.GetChild(i).gameObject.SetActive(save.alive[i]) ;
             }
+            /*foreach (string triggerActive in save.alive)
+            {
+                
+                progress.transform.Find("0");
+            }*/
 
+            PlayerData data = save.player;
+
+            GameObject player = GameObject.FindGameObjectWithTag("player");
+
+            player.GetComponent<PlayerScript>().changeValues(new Vector2(data.pos[1], data.pos[2]), data.maxHealth, data.maxStamina, data.healthHealed);
           
 
             Debug.Log("Game Loaded");
@@ -120,15 +138,14 @@ public class Game : MonoBehaviour
     private Save CreateSaveGameObject()
     {
         Save save = new Save();
-        int i = 0;
         foreach (Transform t in progress.transform)
         {
             GameObject ob = t.gameObject;
             if (
                 ob.activeSelf)
             {
-                save.alive.Add(ob);
-                i++;
+                save.alive.Add(ob.GetComponent<Rigidbody2D>().IsAwake());
+          
             }
         }
 

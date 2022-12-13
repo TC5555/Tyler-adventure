@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Save
 {
-    public List<GameObject> alive = new List<GameObject>();
-    public List<GameObject> ObjectNumber = new List<GameObject>();
+    public List<bool> alive = new List<bool>();
+    public PlayerData player = new PlayerData();
 }
+ 
