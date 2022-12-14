@@ -13,16 +13,17 @@ public class Game : MonoBehaviour
     [SerializeField]
     private GameObject menu;
     [SerializeField]
-    private GameObject Triggers;
+    private GameObject Progress;
     [SerializeField]
     private GameObject Enemies;
-    [SerializeField]
-    private GameObject Chests;
+
+    public bool canSave = true;
 
     private bool isPaused = false;
 
     private void Awake()
     {
+        StartCoroutine(AutoSave());
         Unpause();
     }
 
@@ -90,16 +91,10 @@ public class Game : MonoBehaviour
             file.Close();
 
             // 3
-            for (int i = 0; i < save.triggers.Count; i++)
+            for (int i = 0; i < save.progress.Count; i++)
             {
-                Triggers.transform.GetChild(i).gameObject.SetActive(save.triggers[i]);
+                Progress.transform.GetChild(i).gameObject.SetActive(save.progress[i]);
             }
-
-            for (int i = 0; i < save.chests.Count; i++)
-            {
-                Chests.transform.GetChild(i).gameObject.SetActive(save.chests[i]);
-            }
-
 
             for (int i = 0; i < save.enemies.Count; i++)
             {
@@ -114,6 +109,28 @@ public class Game : MonoBehaviour
                 enemy.gameObject.SetActive(dataE.isActive);
             }
 
+            
+           
+            Cinemachine.CinemachineConfiner cinemachineConfiner;
+            cinemachineConfiner = FindObjectOfType<Cinemachine.CinemachineConfiner>();
+            ConfinerScript ConfinerShape = GameObject.Find("CameraConfiner").GetComponent<ConfinerScript>();
+
+            if (ConfinerShape.originalPoints != ConfinerShape.polygonCollider2D.points)
+            {
+                cinemachineConfiner.m_Damping = 0;
+
+                List<List<float>> bounds = save.bounds;
+                List<Vector2> newPoints = new List<Vector2>();
+
+
+                for (int i = 0; i < bounds.Count; i++)
+                {
+
+                    newPoints.Add(new Vector2(bounds[i][0], bounds[i][1]));
+                }
+
+                ConfinerShape.polygonCollider2D.SetPath(0, newPoints);
+            }
 
             PlayerData dataP = save.player;
 
@@ -150,22 +167,13 @@ public class Game : MonoBehaviour
     {
         Save save = new Save();
 
-        foreach (Transform t in Triggers.transform)
+        foreach (Transform t in Progress.transform)
         {
             GameObject ob = t.gameObject;
 
-            save.triggers.Add(ob.activeSelf);
+            save.progress.Add(ob.activeSelf);
  
         }
-
-        foreach (Transform t in Chests.transform)
-        {
-
-            WeaponChestScript ob = t.gameObject.GetComponent<WeaponChestScript>();
-
-            save.chests.Add(ob.isOpen);
-        }
-
 
         foreach (Transform t in Enemies.transform)
         {
@@ -181,6 +189,27 @@ public class Game : MonoBehaviour
             dataE.isActive = enemy.isActiveAndEnabled;
 
             save.enemies.Add(dataE);
+        }
+
+       
+
+        Cinemachine.CinemachineConfiner cinemachineConfiner;
+        cinemachineConfiner = FindObjectOfType<Cinemachine.CinemachineConfiner>();
+        ConfinerScript ConfinerShape = GameObject.Find("CameraConfiner").GetComponent<ConfinerScript>();
+
+        if (ConfinerShape.originalPoints != ConfinerShape.polygonCollider2D.points)
+        {
+            List<List<float>> bounds = new List<List<float>>();
+
+            for (int i = 0; i < ConfinerShape.polygonCollider2D.points.Length; i++)
+            {
+                Vector2 currentPoints = ConfinerShape.polygonCollider2D.points[i];
+                List<float> points = new List<float>();
+                points.Add(currentPoints[0]);
+                points.Add(currentPoints[1]);
+                bounds.Add(points);
+            }
+            save.bounds = bounds;
         }
 
         PlayerData dataP = new PlayerData();
@@ -206,5 +235,23 @@ public class Game : MonoBehaviour
 
 
         return save;
+    }
+
+    IEnumerator AutoSave()
+    {
+
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            if (canSave)
+            {
+                yield return new WaitForSeconds(20f);
+                if (canSave)
+                {
+                    SaveGame();
+                }
+            }
+        }
+      
     }
 }

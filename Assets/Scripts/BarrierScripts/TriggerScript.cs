@@ -4,7 +4,7 @@ using UnityEngine;
 public class TriggerScript : MonoBehaviour
 {
     public bool cameraLocked;
-    public Vector2[] points;
+    public List<Vector2> points;
     Cinemachine.CinemachineConfiner cinemachineConfiner;
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -21,6 +21,11 @@ public class TriggerScript : MonoBehaviour
         {
             child.gameObject.SetActive(true);
         }
+
+        
+            Game game = GameObject.Find("Main Camera").GetComponent<Game>();
+            game.canSave = false;
+           
 
         Rigidbody2D rigidbody2d = gameObject.GetComponent<Rigidbody2D>();
         rigidbody2d.simulated = false;

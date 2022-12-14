@@ -17,7 +17,9 @@ public class EnemyScript : MonoBehaviour
     public float currentHealth;
   
     protected Color32 colorVal = new Color32(255,255,255,255);
-    
+
+    private bool canSave = true;
+
     protected new Rigidbody2D rigidbody2D;
     protected float timer;
     protected Vector2 direction;
@@ -51,6 +53,13 @@ public class EnemyScript : MonoBehaviour
         {
             if (colorVal.a - (byte)(750 * Time.deltaTime) < 0)
             {
+                if (!canSave)
+                {
+                    Game game = GameObject.Find("Main Camera").GetComponent<Game>();
+                    game.canSave = true;
+                    canSave = true;
+                }
+
                 gameObject.SetActive(false);
             }
 
@@ -86,6 +95,11 @@ public class EnemyScript : MonoBehaviour
                 // Debug.Log("I: " + 6.283f * i / divisions + " Quaternion: " + Mathf.Cos(6.283f * i / divisions) + " " + Mathf.Sin(6.283f * i / divisions));
                 if (Physics2D.Raycast(transform.position, angle, scanRange, LayerMask.GetMask("Player")))
                 {
+                    if (canSave) {
+                        Game game = GameObject.Find("Main Camera").GetComponent<Game>();
+                        game.canSave = false;
+                        canSave = false;
+                    }
                     alertTimer = false;
                     direction = angle;
 
@@ -104,6 +118,13 @@ public class EnemyScript : MonoBehaviour
 
                 if (timer < 0)
                 {
+                    if (!canSave)
+                    {
+                        Game game = GameObject.Find("Main Camera").GetComponent<Game>();
+                        game.canSave = true;
+                        canSave = true;
+                    }
+
                     direction *= 0;
 
                     alertTimer = false;

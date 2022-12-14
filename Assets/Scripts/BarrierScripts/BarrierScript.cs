@@ -19,6 +19,10 @@ public class BarrierScript : MonoBehaviour
                
                 Confiner.polygonCollider2D.SetPath(0,Confiner.originalPoints);
 
+                    Game game = GameObject.Find("Main Camera").GetComponent<Game>();
+                 game.canSave = true;
+                
+
             }
             Destroy(gameObject);
         }
