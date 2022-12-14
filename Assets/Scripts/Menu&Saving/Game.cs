@@ -18,8 +18,6 @@ public class Game : MonoBehaviour
     private GameObject Progress;
     [SerializeField]
     private GameObject Enemies;
-    [SerializeField]
-    private int currentScene;
 
     public bool canSave = true;
 
@@ -27,24 +25,40 @@ public class Game : MonoBehaviour
 
     private void Awake()
     {
+
+        Debug.Log(gameObject.name);
+        if (ToLoad.load && menu != null)
+        {
+            LoadGame();
+            Debug.Log(gameObject.name);
+            ToLoad.load = false;
+        }
+        Debug.Log(gameObject.name);
         StartCoroutine(AutoSave());
         Unpause();
     }
  
+
     public void Pause()
     {
-        menu.SetActive(true);
-        Cursor.visible = true;
-        Time.timeScale = 0;
-        isPaused = true;
+        if (menu != null)
+        {
+            menu.SetActive(true);
+            Cursor.visible = true;
+            Time.timeScale = 0;
+            isPaused = true;
+        }
     }
 
     public void Unpause()
     {
-        menu.SetActive(false);
-        Cursor.visible = false;
-        Time.timeScale = 1;
-        isPaused = false;
+        if (menu != null)
+        {
+            menu.SetActive(false);
+            Cursor.visible = false;
+            Time.timeScale = 1;
+            isPaused = false;
+        }
     }
 
     public bool IsGamePaused()
@@ -70,15 +84,41 @@ public class Game : MonoBehaviour
 
     public void ChangeScene(int newScene)
     {
-        Debug.Log("1");
-        SceneManager.LoadScene(newScene);
-        currentScene = newScene;
-        Debug.Log("2");
+      
+          
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
+            Save save = (Save)bf.Deserialize(file);
+            file.Close();
+
+            save.currentScene = newScene;
+            SceneManager.LoadScene(newScene);
+
+        Debug.Log(newScene + " " + save.currentScene);
+        FileStream file2 = File.Create(Application.persistentDataPath + "/gamesave.save");
+            bf.Serialize(file2, save);
+            file.Close();
+       
     }
+
+    public void LoadScene()
+    {
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
+        Save save = (Save)bf.Deserialize(file);
+        file.Close();
+
+        Debug.Log(save.currentScene);
+
+        SceneManager.LoadScene(1);
+        ToLoad.load = true;
+    }
+
 
     public void SaveGame()
     {
         // 1
+       
         Save save = CreateSaveGameObject();
         
 
@@ -94,7 +134,6 @@ public class Game : MonoBehaviour
     {
         // 1
 
-
         if (File.Exists(Application.persistentDataPath + "/gamesave.save"))
         {
 
@@ -105,9 +144,9 @@ public class Game : MonoBehaviour
             Save save = (Save)bf.Deserialize(file);
             file.Close();
 
-            currentScene = save.currentScene;
+            //currentScene = save.currentScene;
 
-            SceneManager.LoadScene(currentScene);
+            //SceneManager.LoadScene(currentScene);
 
 
             // 3
@@ -186,8 +225,6 @@ public class Game : MonoBehaviour
     private Save CreateSaveGameObject()
     {
         Save save = new Save();
-
-        currentScene = save.currentScene;
 
         foreach (Transform t in Progress.transform)
         {
