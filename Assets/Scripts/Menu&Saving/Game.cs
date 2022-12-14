@@ -6,6 +6,8 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 public class Game : MonoBehaviour
 {
@@ -16,6 +18,8 @@ public class Game : MonoBehaviour
     private GameObject Progress;
     [SerializeField]
     private GameObject Enemies;
+    [SerializeField]
+    private int currentScene;
 
     public bool canSave = true;
 
@@ -26,7 +30,6 @@ public class Game : MonoBehaviour
         StartCoroutine(AutoSave());
         Unpause();
     }
-
  
     public void Pause()
     {
@@ -64,6 +67,15 @@ public class Game : MonoBehaviour
         }
     }
 
+
+    public void ChangeScene(int newScene)
+    {
+        Debug.Log("1");
+        SceneManager.LoadScene(newScene);
+        currentScene = newScene;
+        Debug.Log("2");
+    }
+
     public void SaveGame()
     {
         // 1
@@ -81,14 +93,22 @@ public class Game : MonoBehaviour
     public void LoadGame()
     {
         // 1
+
+
         if (File.Exists(Application.persistentDataPath + "/gamesave.save"))
         {
+
 
             // 2
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
             Save save = (Save)bf.Deserialize(file);
             file.Close();
+
+            currentScene = save.currentScene;
+
+            SceneManager.LoadScene(currentScene);
+
 
             // 3
             for (int i = 0; i < save.progress.Count; i++)
@@ -166,6 +186,8 @@ public class Game : MonoBehaviour
     private Save CreateSaveGameObject()
     {
         Save save = new Save();
+
+        currentScene = save.currentScene;
 
         foreach (Transform t in Progress.transform)
         {

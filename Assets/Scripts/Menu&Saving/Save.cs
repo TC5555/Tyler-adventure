@@ -5,6 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class Save
 {
+    public int currentScene = new int();
+
     public List<bool> progress = new List<bool>();
 
     public List<EnemyObjectData> enemies = new List<EnemyObjectData>();
