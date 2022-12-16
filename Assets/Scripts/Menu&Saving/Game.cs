@@ -110,7 +110,7 @@ public class Game : MonoBehaviour
 
         Debug.Log(save.currentScene);
 
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(save.currentScene);
         ToLoad.load = true;
     }
 
@@ -144,10 +144,15 @@ public class Game : MonoBehaviour
             Save save = (Save)bf.Deserialize(file);
             file.Close();
 
-            //currentScene = save.currentScene;
 
-            //SceneManager.LoadScene(currentScene);
+            /*if( ==save.currentScene)
+            {
 
+            }
+            currentScene = save.currentScene;
+
+            SceneManager.LoadScene(currentScene);
+            */
 
             // 3
             for (int i = 0; i < save.progress.Count; i++)
@@ -174,7 +179,7 @@ public class Game : MonoBehaviour
             cinemachineConfiner = FindObjectOfType<Cinemachine.CinemachineConfiner>();
             ConfinerScript ConfinerShape = GameObject.Find("CameraConfiner").GetComponent<ConfinerScript>();
 
-            if (ConfinerShape.originalPoints != ConfinerShape.polygonCollider2D.points)
+            /*if (ConfinerShape.originalPoints != ConfinerShape.polygonCollider2D.points)
             {
                 cinemachineConfiner.m_Damping = 0;
 
@@ -189,7 +194,7 @@ public class Game : MonoBehaviour
                 }
 
                 ConfinerShape.polygonCollider2D.SetPath(0, newPoints);
-            }
+            }*/
 
             PlayerData dataP = save.player;
 
@@ -210,7 +215,7 @@ public class Game : MonoBehaviour
             playerScript.healAmount = dataP.healAmount;
 
 
-            playerScript.updateUI();
+            //playerScript.updateUI();
 
             Debug.Log("Game Loaded");
 
