@@ -23,23 +23,44 @@ public class Game : MonoBehaviour
 
     private bool isPaused = false;
 
-    private void Awake()
+    IEnumerator Start()
     {
+        yield return new WaitForEndOfFrame();
 
-        Debug.Log(gameObject.name);
-        if (ToLoad.load && menu != null)
+        if (GameInfo.load && menu != null)
         {
             LoadGame();
             Debug.Log(gameObject.name);
-            ToLoad.load = false;
+            GameInfo.load = false;
         }
-        Debug.Log(gameObject.name);
-        StartCoroutine(AutoSave());
+    }
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(GameObject.Find("EventSystem"));
+        if (menu != null)
+        {
+            DontDestroyOnLoad(GameObject.Find("Main Camera"));
+            DontDestroyOnLoad(GameObject.Find("CM vcam1"));
+            DontDestroyOnLoad(GameObject.Find("Player"));
+            DontDestroyOnLoad(GameObject.Find("HUD"));
+            StartCoroutine(AutoSave());
+            canSave = true;
+        }
+        else
+        {
+            if (GameObject.Find("Player") != null)
+            {
+                Destroy(GameObject.Find("Player"));
+                Destroy(GameObject.Find("CM vcam1"));
+                Destroy(GameObject.Find("Main Camera"));
+                DontDestroyOnLoad(GameObject.Find("HUD"));
+                canSave = false;
+            }
+        }
         Unpause();
     }
- 
-
-    public void Pause()
+public void Pause()
     {
         if (menu != null)
         {
@@ -82,52 +103,44 @@ public class Game : MonoBehaviour
     }
 
 
-    public void ChangeScene(int newScene)
-    {
-      
-          
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
-            Save save = (Save)bf.Deserialize(file);
-            file.Close();
-
-            save.currentScene = newScene;
-            SceneManager.LoadScene(newScene);
-
-        Debug.Log(newScene + " " + save.currentScene);
-        FileStream file2 = File.Create(Application.persistentDataPath + "/gamesave.save");
-            bf.Serialize(file2, save);
-            file.Close();
-       
-    }
-
-    public void LoadScene()
-    {
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
-        Save save = (Save)bf.Deserialize(file);
-        file.Close();
-
-        Debug.Log(save.currentScene);
-
-        SceneManager.LoadScene(save.currentScene);
-        ToLoad.load = true;
-    }
-
 
     public void SaveGame()
     {
         // 1
-       
-        Save save = CreateSaveGameObject();
-        
+        if (File.Exists(Application.persistentDataPath + "/gamesave.save")) {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
+            Save[] save = (Save[])bf.Deserialize(file);
+            file.Close();
+            save[0].currentScene = GameInfo.currentScene;
 
-        // 2
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + "/gamesave.save");
-        bf.Serialize(file, save);
-        Unpause();
-        Debug.Log("Game Saved");
+            save[GameInfo.currentScene] = CreateSaveGameObject();
+
+            file = File.Create(Application.persistentDataPath + "/gamesave.save");
+          
+            bf.Serialize(file, save);
+            file.Close();
+            Unpause();
+            Debug.Log("Game Saved");
+
+        }
+        else
+        {
+            Save[] save = new Save[SceneManager.sceneCountInBuildSettings];
+            Debug.Log(GameInfo.currentScene + " " + SceneManager.sceneCountInBuildSettings);
+            save[GameInfo.currentScene] = CreateSaveGameObject();
+            save[0] = new Save();
+            save[0].currentScene = GameInfo.currentScene;
+            // 2
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Create(Application.persistentDataPath + "/gamesave.save");
+            bf.Serialize(file, save);
+            file.Close();
+
+            Unpause();
+            Debug.Log("Game Saved");
+        }
+
     }
 
     public void LoadGame()
@@ -141,28 +154,29 @@ public class Game : MonoBehaviour
             // 2
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
-            Save save = (Save)bf.Deserialize(file);
+            Save[] save = (Save[])bf.Deserialize(file);
             file.Close();
 
 
-            /*if( ==save.currentScene)
+            Debug.Log(save[0].currentScene + " " + GameInfo.currentScene);
+            if (GameInfo.currentScene != save[0].currentScene)
             {
-
+                GameInfo.currentScene = save[0].currentScene;
+                GameInfo.load = true;
+                SceneManager.LoadScene(GameInfo.currentScene);
+                return;
             }
-            currentScene = save.currentScene;
-
-            SceneManager.LoadScene(currentScene);
-            */
+            
 
             // 3
-            for (int i = 0; i < save.progress.Count; i++)
+            for (int i = 0; i < save[GameInfo.currentScene].progress.Count; i++)
             {
-                Progress.transform.GetChild(i).gameObject.SetActive(save.progress[i]);
+                Progress.transform.GetChild(i).gameObject.SetActive(save[GameInfo.currentScene].progress[i]);
             }
 
-            for (int i = 0; i < save.enemies.Count; i++)
+            for (int i = 0; i < save[GameInfo.currentScene].enemies.Count; i++)
             {
-                EnemyObjectData dataE = save.enemies[i];
+                EnemyObjectData dataE = save[GameInfo.currentScene].enemies[i];
 
                EnemyScript enemy = Enemies.transform.GetChild(i).GetComponent<EnemyScript>();
 
@@ -179,11 +193,11 @@ public class Game : MonoBehaviour
             cinemachineConfiner = FindObjectOfType<Cinemachine.CinemachineConfiner>();
             ConfinerScript ConfinerShape = GameObject.Find("CameraConfiner").GetComponent<ConfinerScript>();
 
-            /*if (ConfinerShape.originalPoints != ConfinerShape.polygonCollider2D.points)
+            if (ConfinerShape.originalPoints != ConfinerShape.polygonCollider2D.points)
             {
                 cinemachineConfiner.m_Damping = 0;
 
-                List<List<float>> bounds = save.bounds;
+                List<List<float>> bounds = save[GameInfo.currentScene].bounds;
                 List<Vector2> newPoints = new List<Vector2>();
 
 
@@ -194,9 +208,9 @@ public class Game : MonoBehaviour
                 }
 
                 ConfinerShape.polygonCollider2D.SetPath(0, newPoints);
-            }*/
+            }
 
-            PlayerData dataP = save.player;
+            PlayerData dataP = save[GameInfo.currentScene].player;
 
             PlayerScript playerScript = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
 
@@ -215,7 +229,7 @@ public class Game : MonoBehaviour
             playerScript.healAmount = dataP.healAmount;
 
 
-            //playerScript.updateUI();
+            playerScript.updateUI();
 
             Debug.Log("Game Loaded");
 
@@ -227,9 +241,21 @@ public class Game : MonoBehaviour
         }
     }
 
+    public void QuitGame()
+    {
+        if (canSave && menu != null)
+        {
+            SaveGame();
+        }
+        Application.Quit();
+    }
+
+
     private Save CreateSaveGameObject()
     {
         Save save = new Save();
+
+        save.currentScene = GameInfo.currentScene;
 
         foreach (Transform t in Progress.transform)
         {
@@ -318,4 +344,26 @@ public class Game : MonoBehaviour
         }
       
     }
+
+    public void ChangeScene(int newScene)
+    {
+        GameInfo.currentScene = newScene;
+        SceneManager.LoadSceneAsync(newScene);
+
+
+    }
+
+    /*  public void LoadScene()
+      {
+          BinaryFormatter bf = new BinaryFormatter();
+          FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
+          Save save = (Save)bf.Deserialize(file);
+          file.Close();
+
+          Debug.Log(save.currentScene);
+
+          SceneManager.LoadScene(save.currentScene);
+          ToLoad.load = true;
+      }*/
+
 }
