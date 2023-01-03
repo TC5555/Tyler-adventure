@@ -102,9 +102,18 @@ public void Pause()
         }
     }
 
+    public void DeleteSave()
+    {
+        if (File.Exists(Application.persistentDataPath + "/gamesave.save"))
+        {
+            FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
 
+            file.Dispose();
+            file.Close();
 
-    public void SaveGame()
+        }
+    }
+        public void SaveGame()
     {
         // 1
         if (File.Exists(Application.persistentDataPath + "/gamesave.save")) {
@@ -331,16 +340,13 @@ public void Pause()
     {
 
         while (true)
-        {
-            yield return new WaitForSeconds(1f);
-            if (canSave)
-            {
+        { 
                 yield return new WaitForSeconds(20f);
                 if (canSave)
                 {
                     SaveGame();
                 }
-            }
+            
         }
       
     }
