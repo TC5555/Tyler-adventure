@@ -24,7 +24,7 @@ public class Game : MonoBehaviour
     private bool isPaused = false;
 
     IEnumerator Start()
-    {
+    { 
         yield return new WaitForEndOfFrame();
 
         if (GameInfo.load && menu != null)
@@ -342,10 +342,10 @@ public void Pause()
         while (true)
         { 
                 yield return new WaitForSeconds(20f);
-                if (canSave)
-                {
-                    SaveGame();
-                }
+               // if (canSave)
+               // {
+                //    SaveGame();
+               //s }
             
         }
       
@@ -354,7 +354,7 @@ public void Pause()
     public void ChangeScene(int newScene)
     {
         GameInfo.currentScene = newScene;
-        SceneManager.LoadSceneAsync(newScene);
+        SceneManager.LoadScene(newScene);
 
 
     }
