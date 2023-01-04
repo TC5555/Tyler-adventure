@@ -9,7 +9,7 @@ public class ZombieScript : EnemyScript
     bool particlePlayed = false;
     bool charged = false;
     public float chargeSpeedMulti = 1;
-    
+    public float chargeCooldown = 6f;
 
     void LateUpdate()
     {
@@ -26,8 +26,8 @@ public class ZombieScript : EnemyScript
             if (!particlePlayed && chargeTimer <= 2.5f && chargeTimer >= 1f)
             {
                 ChargeParticles.Play();
-                animator.speed *= .2f * chargeSpeedMulti;
-                speed *= -.2f*chargeSpeedMulti;
+                animator.speed /= 5f *chargeSpeedMulti;
+                speed /= -5f* chargeSpeedMulti;
                 scanning = false;
                 particlePlayed = true;
             }
@@ -53,9 +53,9 @@ public class ZombieScript : EnemyScript
                 charged = false;
                 particlePlayed = false;
                 scanning = true;
-                animator.speed *= .2f * chargeSpeedMulti;
-                speed *= .2f*chargeSpeedMulti * chargeSpeedMulti;
-                chargeTimer = 6f;
+                animator.speed /= 5f * chargeSpeedMulti;
+                speed /= 5f * chargeSpeedMulti;
+                chargeTimer = chargeCooldown;
                 direction *= -1f;
 
             }

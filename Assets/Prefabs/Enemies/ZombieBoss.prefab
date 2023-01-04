@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 3494377998596965569}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 12.9789, y: 4.1745, z: -16.222801}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 1}
   m_Children:
   - {fileID: 724104504816154748}
   - {fileID: 3590128124073829481}
@@ -172,12 +172,13 @@ MonoBehaviour:
   currentHealth: 50
   alive: 1
   pickupPrefab: {fileID: 0}
-  scanRange: 10
+  scanRange: 999
   animator: {fileID: 8329685406535674802}
   percentHealthDropChance: 0
   amountHealthDropped: 0
   ChargeParticles: {fileID: 8023987135689423492}
   chargeSpeedMulti: 1.5
+  chargeCooldown: 4
 --- !u!1 &3929549646218364056
 GameObject:
   m_ObjectHideFlags: 0
@@ -924,7 +925,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 3
+      value: 1.5
       mode: 0
       spread: 0
       speed:
@@ -5853,7 +5854,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 3
+      value: 1.5
       mode: 0
       spread: 0
       speed:
